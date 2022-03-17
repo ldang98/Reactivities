@@ -13,7 +13,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-
+using MediatR;
+using Application.Activities;
+using AutoMapper;
+using API.Extensions;
 namespace API
 {
     public class Startup
@@ -31,22 +34,8 @@ namespace API
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
-            });
-            services.AddDbContext<DataContext>(Opt =>
-            {
-                Opt.UseSqlite(Config.GetConnectionString("DefaultConnection"));
-            });
-
-            //Add a CORS policy to allow react app to fetch api response
-            services.AddCors(opt => {
-                opt.AddPolicy("CorsPolicy", policy =>{
-                    //chain any policies we want to add
-                   policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000"); 
-                });
-            });
+            services.AddApplicationServices(Config);
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
