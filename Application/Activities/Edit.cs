@@ -21,7 +21,7 @@ namespace Application.Activities
             private readonly IMapper mapper;
             public Handler(DataContext context, IMapper mapper){
             this.mapper = mapper;
-            this.Context = context;
+            this.Context = context;  
 
             }
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
