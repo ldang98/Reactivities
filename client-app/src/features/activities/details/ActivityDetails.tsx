@@ -1,20 +1,18 @@
 import React from "react";
 import { act } from "react-dom/test-utils";
 import { Button, Card, Icon, Image } from "semantic-ui-react";
-import { Activity } from "../../../app/models/Activity";
+import LoadingComponents from "../../../app/layout/LoadingComponents";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  activity: Activity;
-  cancelSelectActivity: () => void;
-  openForm: (id: string) => void;
-}
-const ActivityDetails = ({
-  activity,
-  cancelSelectActivity,
-  openForm,
-}: Props) => {
+const ActivityDetails = () => {
+  const { activityStore } = useStore();
+
+  //giveselectedActivity the name activity
+  const { selectedActivity: activity } = activityStore;
+
+  if (!activity) return <LoadingComponents />;
   return (
-    <Card fluid>
+    <Card fluid sticky>
       <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
       <Card.Content>
         <Card.Header>{activity.title}</Card.Header>
@@ -27,14 +25,14 @@ const ActivityDetails = ({
         <Button.Group widths="2">
           <Button
             onClick={() => {
-              openForm(activity.id);
+              activityStore.openForm(activity.id);
             }}
             basic
             color="blue"
             content="Edit"
           />
           <Button
-            onClick={cancelSelectActivity}
+            onClick={activityStore.cancelSelectedActivity}
             basic
             color="grey"
             content="Cancel"

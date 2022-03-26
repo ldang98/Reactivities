@@ -1,19 +1,14 @@
+import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/Activity";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  activities: Activity[];
-  selectActivity: (id: string) => void;
-  deleteActivity: (id: string) => void;
-  submitting: boolean;
-}
-const ActivityList = ({
-  activities,
-  selectActivity,
-  deleteActivity,
-  submitting,
-}: Props) => {
+const ActivityList = () => {
+  const { activityStore } = useStore();
+  const { deleteActivity, activitiesByDate, loading } = activityStore;
+
+  //enables loading icon on only the button being clicked instead of all delete buttons
   const [target, setTarget] = useState("");
   function handleActivityDelete(
     event: SyntheticEvent<HTMLButtonElement>,
@@ -22,10 +17,11 @@ const ActivityList = ({
     setTarget(event.currentTarget.name);
     deleteActivity(id);
   }
+
   return (
     <Segment>
       <Item.Group divided>
-        {activities.map((activity) => (
+        {activitiesByDate.map((activity) => (
           <Item key={activity.id}>
             <Item.Content>
               <Item.Header as="a">{activity.title}</Item.Header>
@@ -39,7 +35,7 @@ const ActivityList = ({
               <Item.Extra>
                 <Button
                   onClick={() => {
-                    selectActivity(activity.id);
+                    activityStore.selectActivity(activity.id);
                   }}
                   floated="right"
                   content="View"
@@ -50,7 +46,7 @@ const ActivityList = ({
                   onClick={(event) => {
                     handleActivityDelete(event, activity.id);
                   }}
-                  loading={submitting && target === activity.id}
+                  loading={loading && target === activity.id}
                   floated="right"
                   content="Delete"
                   color="red"
@@ -65,4 +61,4 @@ const ActivityList = ({
   );
 };
 
-export default ActivityList;
+export default observer(ActivityList);
