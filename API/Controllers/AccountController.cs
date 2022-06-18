@@ -45,10 +45,12 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto){
             if(await userManager.Users.AnyAsync(record => record.Email == registerDto.Email)){
-                return BadRequest("Email taken");
+                ModelState.AddModelError("email", "Email taken");
+                return ValidationProblem();
             }
             if(await userManager.Users.AnyAsync(record => record.UserName == registerDto.Username)){
-                return BadRequest("Username taken");
+                ModelState.AddModelError("username","Username taken");
+                return ValidationProblem();
             }
 
             var user = new AppUser{
